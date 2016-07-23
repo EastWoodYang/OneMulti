@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fragment B"
+            android:textColor="#ff757575"
+            android:paddingBottom="6dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ff757575" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/start_fragment_c_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:text="start fragment c"
+                android:gravity="left|center_vertical"/>
+
+            <Button
+                android:id="@+id/start_fragment_c_for_result_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="start fragment c for result"
+                android:gravity="left|center_vertical"/>
+
+            <Button
+                android:id="@+id/start_fragment_c_with_flag_no_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="start fragment C with flag:NO_HISTORY"
+                android:gravity="left|center_vertical"/>
+
+            <Button
+                android:id="@+id/set_result_and_finish_fragment_b_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:text="set result and finish fragment b"
+                android:gravity="left|center_vertical" />
+
+            <Button
+                android:id="@+id/finish_fragment_b_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="finish fragment b"
+                android:gravity="left|center_vertical"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fragment Manager Info"
+            android:textColor="#ff757575"
+            android:paddingBottom="6dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ff757575" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/info_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="@android:color/white"
+                android:textSize="14dp"
+                android:padding="6dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

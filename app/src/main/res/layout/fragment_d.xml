@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fragment D"
+            android:textColor="#ff757575"
+            android:paddingBottom="6dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ff757575" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/start_fragment_a_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:text="start fragment a"
+                android:gravity="left|center_vertical"/>
+
+            <Button
+                android:id="@+id/start_fragment_a_for_result_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="start fragment a for result"
+                android:gravity="left|center_vertical"/>
+
+            <Button
+                android:id="@+id/set_result_and_finish_fragment_d_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:text="set result and finish fragment d"
+                android:gravity="left|center_vertical" />
+
+            <Button
+                android:id="@+id/finish_fragment_d_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="finish fragment d"
+                android:gravity="left|center_vertical"/>
+
+            <Button
+                android:id="@+id/start_fragment_b_with_flag_clear_top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="start fragment B with flag CLEAR_TOP"
+                android:gravity="left|center_vertical"/>
+
+            <Button
+                android:id="@+id/start_fragment_b_with_flag_clear_all"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="start fragment B with flag:CLEAR_ALL"
+                android:gravity="left|center_vertical"/>
+
+            <Button
+                android:id="@+id/start_fragment_b_with_flag_single_top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="start fragment B with flag:SINGLE_TOP"
+                android:gravity="left|center_vertical"/>
+
+            <Button
+                android:id="@+id/start_fragment_b_with_flag_single_instance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="start fragment B with flag:SINGLE_INSTANCE"
+                android:gravity="left|center_vertical"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fragment Manager Info"
+            android:textColor="#ff757575"
+            android:paddingBottom="6dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ff757575" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/info_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="@color/colorDark"
+                android:textSize="14dp"
+                android:padding="6dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
