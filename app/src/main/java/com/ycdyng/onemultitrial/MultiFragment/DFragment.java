@@ -102,7 +102,12 @@ public class DFragment extends MultiFragment implements View.OnClickListener {
 
         mFinishFragmentDButton.setOnClickListener(this);
 
-        setInfo();
+        mTitleTextView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setInfo();
+            }
+        }, 250);
     }
 
     private void setInfo() {

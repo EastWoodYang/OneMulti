@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ContextThemeWrapper;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,14 +34,18 @@ import android.widget.EditText;
 
 import java.lang.ref.WeakReference;
 
-public abstract class MultiFragment extends Fragment implements OneMulti{
+public abstract class MultiFragment extends Fragment implements OneMulti {
 
     private static final String TAG = "MultiFragment";
 
-    /** Standard fragment result: operation canceled. */
-    public static final int RESULT_CANCELED    = 0;
-    /** Standard fragment result: operation succeeded. */
-    public static final int RESULT_OK           = -1;
+    /**
+     * Standard fragment result: operation canceled.
+     */
+    public static final int RESULT_CANCELED = 0;
+    /**
+     * Standard fragment result: operation succeeded.
+     */
+    public static final int RESULT_OK = -1;
 
     public OneActivity mActivity;
     public Context mContext;
@@ -57,7 +62,7 @@ public abstract class MultiFragment extends Fragment implements OneMulti{
         super.onAttach(context);
         Log.d(TAG, getClass().getSimpleName() + ": onAttach");
         mContext = context;
-        if(context instanceof OneActivity) {
+        if (context instanceof OneActivity) {
             mActivity = (OneActivity) context;
         } else {
             throw new ClassCastException(mActivity.toString() + " must extends MultiFragment");
@@ -76,11 +81,11 @@ public abstract class MultiFragment extends Fragment implements OneMulti{
         Log.d(TAG, getClass().getSimpleName() + ": onCreateView");
         View view = null;
         int layoutResId = getLayoutResId();
-        if(layoutResId <= 0) {
+        if (layoutResId <= 0) {
             throw new IllegalStateException("Layout resource id can't be zero");
         }
         int themeResId = getThemeResId();
-        if(themeResId <= 0) {
+        if (themeResId <= 0) {
             view = inflater.inflate(layoutResId, container, false);
         } else {
             final ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(getActivity(), themeResId);
@@ -157,36 +162,50 @@ public abstract class MultiFragment extends Fragment implements OneMulti{
     protected abstract void onCreateView(View view, ViewGroup container, Bundle savedInstanceState);
 
     @Override
-    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
-        if(nextAnim != 0) {
-            Animation animation = AnimationUtils.loadAnimation(getActivity(), nextAnim);
-            animation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    OnFragmentTransactionListener listener = mOnFragmentTransactionListener.get();
-                    if(listener != null) {
-                        listener.onTransactionEnd();
-                    }
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-
-            // NOTE: the animation must be added to an animation set in order for the listener
-            // to work on the exit animation
-            AnimationSet animSet = new AnimationSet(true);
-            animSet.addAnimation(animation);
-            return animSet;
+    public Animation onCreateAnimation(final int transit, final boolean enter, int nextAnim) {
+        if (nextAnim == 0) {
+            return null;
         }
-        return null;
+        if(enter) {
+            if(nextAnim == StartAnimations[0]) {
+                ViewCompat.setTranslationZ(getView(), 1.f);
+            } else {
+                ViewCompat.setTranslationZ(getView(), 0.f);
+            }
+        } else {
+            if(nextAnim == BackAnimations[0]) {
+                ViewCompat.setTranslationZ(getView(), 1.f);
+            } else {
+                ViewCompat.setTranslationZ(getView(), 0.f);
+            }
+        }
+        Animation animation = AnimationUtils.loadAnimation(getActivity(), nextAnim);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                OnFragmentTransactionListener listener = mOnFragmentTransactionListener == null ? null : mOnFragmentTransactionListener.get();
+                if (listener != null) {
+                    listener.onTransactionEnd();
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        // NOTE: the animation must be added to an animation set in order for the listener
+        // to work on the exit animation
+        AnimationSet animSet = new AnimationSet(true);
+        animSet.addAnimation(animation);
+        return animSet;
     }
 
     protected int getThemeResId() {

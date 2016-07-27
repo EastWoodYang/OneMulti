@@ -45,6 +45,8 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
 
     public InputMethodManager mInputMethodManager = null;
 
+    float mTranslationZ = 0.0f;
+
     public long waitTime = 250;
     public long touchTime = 0;
 
@@ -54,16 +56,6 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
         super.onCreate(savedInstanceState);
 
         mFragmentManager = getSupportFragmentManager();
-//        mFragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-//            @Override
-//            public void onBackStackChanged() {
-//                FragmentManager fragmentManager = getSupportFragmentManager();
-//                if (fragmentManager != null) {
-//                    MultiFragment multiFragment = (MultiFragment) fragmentManager.findFragmentById(android.R.id.content);
-//                    multiFragment.onFragmentResume();
-//                }
-//            }
-//        });
 
         String className = null;
         Intent intent = getIntent();
@@ -88,7 +80,6 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
         String name = makeFragmentName(getClass().getSimpleName(), className);
         if (DEBUG) Log.v(TAG, "Adding item #" + name);
         mCurTransaction.add(android.R.id.content, fragment, name);
-
         fragment.setMenuVisibility(true);
         fragment.setUserVisibleHint(true);
         mCurrentPrimaryItem = fragment;
@@ -97,37 +88,23 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
     }
 
     public void startFragment(Intent intent) {
-        startFragment(intent, CustomAnimations);
+        startFragment(intent, StartAnimations);
     }
 
     public void startFragment(Intent intent, boolean anim) {
         int[] customAnimations = null;
-        if(anim) customAnimations = CustomAnimations;
+        if(anim) customAnimations = StartAnimations;
         startFragment(intent, customAnimations);
     }
 
     private void startFragment(Intent intent, int[] customAnimations) {
-
-//        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//        if(anim != null) {
-//            if(anim.length == 4) {
-//                fragmentTransaction.setCustomAnimations(anim[0], anim[1], anim[2], anim[3]);
-//            } else if(anim.length == 2) {
-//                fragmentTransaction.setCustomAnimations(anim[0], anim[1]);
-//            }
-//        }
-//
-//        if(fragment instanceof MultiFragment) {
-//            MultiFragment baseOneMultiFragment = (MultiFragment) fragment;
-//            baseOneMultiFragment.setOnFragmentTransactionListener(mOnFragmentTransactionListener);
-//        } else {
-//            throw new IllegalArgumentException(fragment.getClass().getName()  + " is inaccessible");
-//        }
-
         clearAvailIndices();
         mCurTransaction = mFragmentManager.beginTransaction();
+        mCurTransaction.setCustomAnimations(customAnimations[0], customAnimations[1]);
+        mCurTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+
         String name = makeFragmentName(getClass().getSimpleName(), intent.getComponent().getClassName());
-        int currentAddedFragmentCount = getAddedFragmentCount();
+
         Fragment fragment = null;
         if(intent.getFlags() == LaunchMode.FLAG_FRAGMENT_CLEAR_TOP) {
             // at the top of the history stack ?
@@ -138,6 +115,8 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
                 // Do we already have this fragment?
                 fragment = mFragmentManager.findFragmentByTag(name);
                 if(fragment != null) {  // Yes, we have
+                    mCurTransaction.attach(fragment);
+
                     int attachFragmentIndex = getFragmentIndex(fragment);
                     List<Fragment> availableFragments = getAvailableFragments();
                     for (int i = availableFragments.size() - 1; i >= 0 ; i--) {
@@ -149,37 +128,44 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
                             }
                         }
                     }
-                    mCurTransaction.attach(fragment);
                 } else {
-                    if(mCurrentPrimaryItem != null) {
-                        mCurTransaction.detach(mCurrentPrimaryItem);
-                    }
                     fragment = getFragment(intent.getComponent().getClassName());
                     fragment.setArguments(intent.getExtras());
                     if (DEBUG) Log.v(TAG, "Adding item #" + name);
                     mCurTransaction.add(android.R.id.content, fragment, name);
+
+                    if(mCurrentPrimaryItem != null) {
+                        mCurTransaction.detach(mCurrentPrimaryItem);
+                    }
                 }
             }
         } else if(intent.getFlags() == LaunchMode.FLAG_FRAGMENT_CLEAR_ALL) {
-            // remove all
-            List<Fragment> availableFragments = getAvailableFragments();
-            for (int i = availableFragments.size() - 1; i >= 0 ; i--) {
-                mCurTransaction.remove(availableFragments.get(i));
-            }
             // add new
             fragment = getFragment(intent.getComponent().getClassName());
             fragment.setArguments(intent.getExtras());
             if (DEBUG) Log.v(TAG, "Adding item #" + name);
             mCurTransaction.add(android.R.id.content, fragment, name);
+
+            // remove all
+            List<Fragment> availableFragments = getAvailableFragments();
+            for (int i = availableFragments.size() - 1; i >= 0 ; i--) {
+                mCurTransaction.remove(availableFragments.get(i));
+            }
         } else if(intent.getFlags() == LaunchMode.FLAG_FRAGMENT_SINGLE_INSTANCE) {
             // Do we already have this fragment?
             fragment = mFragmentManager.findFragmentByTag(name);
             if(fragment != null) {  // Yes, we have
+                mCurTransaction.attach(fragment);
+
                 if(mCurrentPrimaryItem != null) {
                     mCurTransaction.detach(mCurrentPrimaryItem);
                 }
-                mCurTransaction.attach(fragment);
             } else {
+                fragment = getFragment(intent.getComponent().getClassName());
+                fragment.setArguments(intent.getExtras());
+                if (DEBUG) Log.v(TAG, "Adding item #" + name);
+                mCurTransaction.add(android.R.id.content, fragment, name);
+
                 if(mCurrentPrimaryItem != null) {
                     if(mCurrentPrimaryItem instanceof MultiFragment && ((MultiFragment) mCurrentPrimaryItem).getLaunchMode() == LaunchMode.FLAG_FRAGMENT_NO_HISTORY) {
                         mCurTransaction.remove(mCurrentPrimaryItem);
@@ -187,22 +173,11 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
                         mCurTransaction.detach(mCurrentPrimaryItem);
                     }
                 }
-                fragment = getFragment(intent.getComponent().getClassName());
-                fragment.setArguments(intent.getExtras());
-                if (DEBUG) Log.v(TAG, "Adding item #" + name);
-                mCurTransaction.add(android.R.id.content, fragment, name);
             }
         } else if(intent.getFlags() == LaunchMode.FLAG_FRAGMENT_SINGLE_TOP) {
             if(mCurrentPrimaryItem.getClass().getName().equals(intent.getComponent().getClassName())) {
                 mCurTransaction.attach(mCurrentPrimaryItem);
             } else {
-                if(mCurrentPrimaryItem != null) {
-                    if(mCurrentPrimaryItem instanceof MultiFragment && ((MultiFragment) mCurrentPrimaryItem).getLaunchMode() == LaunchMode.FLAG_FRAGMENT_NO_HISTORY) {
-                        mCurTransaction.remove(mCurrentPrimaryItem);
-                    } else {
-                        mCurTransaction.detach(mCurrentPrimaryItem);
-                    }
-                }
                 // Do we already have this fragment?
                 fragment = mFragmentManager.findFragmentByTag(name);
                 if(fragment != null) {
@@ -222,15 +197,16 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
                     if (DEBUG) Log.v(TAG, "Adding item #" + name);
                     mCurTransaction.add(android.R.id.content, fragment, name);
                 }
-            }
-        } else {
-            if(mCurrentPrimaryItem != null) {
-                if(mCurrentPrimaryItem instanceof MultiFragment && ((MultiFragment) mCurrentPrimaryItem).getLaunchMode() == LaunchMode.FLAG_FRAGMENT_NO_HISTORY) {
-                    mCurTransaction.remove(mCurrentPrimaryItem);
-                } else {
-                    mCurTransaction.detach(mCurrentPrimaryItem);
+
+                if(mCurrentPrimaryItem != null) {
+                    if(mCurrentPrimaryItem instanceof MultiFragment && ((MultiFragment) mCurrentPrimaryItem).getLaunchMode() == LaunchMode.FLAG_FRAGMENT_NO_HISTORY) {
+                        mCurTransaction.remove(mCurrentPrimaryItem);
+                    } else {
+                        mCurTransaction.detach(mCurrentPrimaryItem);
+                    }
                 }
             }
+        } else {
             fragment = getFragment(intent.getComponent().getClassName());
             fragment.setArguments(intent.getExtras());
             if (DEBUG) Log.v(TAG, "Adding item #" + name);
@@ -238,11 +214,14 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
             if(intent.getFlags() == LaunchMode.FLAG_FRAGMENT_NO_HISTORY && fragment instanceof MultiFragment) {
                 ((MultiFragment) fragment).setLaunchMode(LaunchMode.FLAG_FRAGMENT_NO_HISTORY);
             }
-        }
 
-        if (fragment != null && fragment != mCurrentPrimaryItem) {
-            fragment.setMenuVisibility(false);
-            fragment.setUserVisibleHint(false);
+            if(mCurrentPrimaryItem != null) {
+                if(mCurrentPrimaryItem instanceof MultiFragment && ((MultiFragment) mCurrentPrimaryItem).getLaunchMode() == LaunchMode.FLAG_FRAGMENT_NO_HISTORY) {
+                    mCurTransaction.remove(mCurrentPrimaryItem);
+                } else {
+                    mCurTransaction.detach(mCurrentPrimaryItem);
+                }
+            }
         }
 
         if(mCurrentPrimaryItem != null && mCurrentPrimaryItem.getView() != null) {
@@ -277,32 +256,27 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
     }
 
     public final void startFragmentForResult(Intent intent, int requestCode) {
-        startFragmentForResult(intent, requestCode, CustomAnimations);
+        startFragmentForResult(intent, requestCode, StartAnimations);
     }
 
     public final void startFragmentForResult(Intent intent, int requestCode, boolean anim) {
         int[] customAnimations = null;
-        if(anim) customAnimations = CustomAnimations;
+        if(anim) customAnimations = StartAnimations;
         startFragmentForResult(intent, requestCode, customAnimations);
     }
 
     private final void startFragmentForResult(Intent intent, int requestCode, int[] customAnimations) {
         clearAvailIndices();
         mCurTransaction = mFragmentManager.beginTransaction();
+        mCurTransaction.setCustomAnimations(customAnimations[0], customAnimations[1]);
 
-        // Do we already have this fragment?
         String name = makeFragmentName(getClass().getSimpleName(), intent.getComponent().getClassName());
         Fragment fragment = getFragment(intent.getComponent().getClassName());
-        if(fragment == null) return;
         fragment.setTargetFragment(mCurrentPrimaryItem, requestCode);
         fragment.setArguments(intent.getExtras());
         if (DEBUG) Log.v(TAG, "Adding item #" + name);
         mCurTransaction.add(android.R.id.content, fragment, name);
-
-        if (fragment != mCurrentPrimaryItem) {
-            fragment.setMenuVisibility(false);
-            fragment.setUserVisibleHint(false);
-        }
+        mCurTransaction.hide(mCurrentPrimaryItem);
 
         if (fragment != mCurrentPrimaryItem) {
             if (mCurrentPrimaryItem != null) {
@@ -334,11 +308,13 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
             if(availableFragmentCount <= 1) {
                 finishActivity();
             } else {
+                mCurTransaction = mFragmentManager.beginTransaction();
+                mCurTransaction.setCustomAnimations(BackAnimations[0], BackAnimations[1]);
                 Fragment targetFragment = mCurrentPrimaryItem.getTargetFragment();
-                if(targetFragment != null && targetFragment.isVisible()) {
+                if(targetFragment != null && targetFragment.isHidden()) {
                     targetFragment.onActivityResult(mCurrentPrimaryItem.getTargetRequestCode(), mResultCode, mResultData);
-                    mCurTransaction = mFragmentManager.beginTransaction();
                     mCurTransaction.remove(mCurrentPrimaryItem);
+                    mCurTransaction.show(targetFragment);
                     if (targetFragment != mCurrentPrimaryItem) {
                         if (mCurrentPrimaryItem != null) {
                             mCurrentPrimaryItem.setMenuVisibility(false);
@@ -352,7 +328,6 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
                     mCurTransaction = null;
                 } else {
                     Fragment detachedFragment = getDetachedFragment();
-                    mCurTransaction = mFragmentManager.beginTransaction();
                     int detachedFragmentIndex = getFragmentIndex(detachedFragment);
                     int currentPrimaryItemIndex = getFragmentIndex(mCurrentPrimaryItem);
                     if(detachedFragmentIndex < currentPrimaryItemIndex) {
@@ -404,17 +379,6 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
             e.printStackTrace();
             throw new IllegalArgumentException(className + " cannot be instantiated");
         }
-    }
-
-    private FragmentTransaction initCustomAnimations(FragmentTransaction fragmentTransaction, int[] anim) {
-        if(fragmentTransaction != null && anim != null) {
-            if(anim.length == 4) {
-                fragmentTransaction.setCustomAnimations(anim[0], anim[1], anim[2], anim[3]);
-            } else if(anim.length == 2) {
-                fragmentTransaction.setCustomAnimations(anim[0], anim[1]);
-            }
-        }
-        return fragmentTransaction;
     }
 
     private String makeFragmentName(String activity, String fragment) {
@@ -481,6 +445,10 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
         return addedCount;
     }
 
+    public float getTranslationZ() {
+        return mTranslationZ += 1.0f;
+    }
+
     private List<Fragment> getAvailableFragments() {
         List<Fragment> availableFragments = new ArrayList<>();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -494,7 +462,7 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
         return availableFragments;
     }
 
-    private int getAvailableFragmentCount() {
+    public int getAvailableFragmentCount() {
         return getAvailableFragments().size();
     }
 
@@ -560,6 +528,7 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
     }
 
     private MultiFragment.OnFragmentTransactionListener mOnFragmentTransactionListener = new MultiFragment.OnFragmentTransactionListener() {
+
         @Override
         public void onTransactionEnd() {
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -570,6 +539,7 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
                 }
             }
         }
+
     };
 
     public void showSoftInput(EditText view){

@@ -78,7 +78,13 @@ public class CFragment extends MultiFragment implements View.OnClickListener {
         }
 
         mFinishFragmentCButton.setOnClickListener(this);
-        setInfo();
+
+        mTitleTextView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setInfo();
+            }
+        }, 250);
     }
 
     private void setInfo() {

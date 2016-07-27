@@ -53,7 +53,6 @@ public interface OneMulti {
 
     String FRAGMENT_CLASS = "ONE_MULTI_FRAGMENT_CLASS";
 
-    int[] CustomAnimations = new int[] {R.anim.slide_right_in, R.anim.slide_right_out, R.anim.slide_left_in, R.anim.slide_left_out};
-    int[] InitAnimations = new int[] {0, 0, R.anim.slide_left_in, R.anim.slide_left_out};
-    int[] BackAnimations = new int[] {R.anim.slide_left_in, R.anim.slide_left_out, R.anim.slide_right_in, R.anim.slide_right_out};
+    int[] StartAnimations = new int[] {R.anim.slide_right_in, R.anim.slide_left_out};
+    int[] BackAnimations = new int[] {R.anim.back_left_in, R.anim.back_right_out};
 }

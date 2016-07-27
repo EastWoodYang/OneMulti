@@ -85,7 +85,13 @@ public class AFragment extends MultiFragment implements View.OnClickListener {
         mFinishFragmentAButton.setOnClickListener(this);
         mFinishActivityAButton.setOnClickListener(this);
 
-        setInfo();
+        mTitleTextView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setInfo();
+            }
+        }, 250);
+
     }
 
     private void setInfo() {

@@ -2,5 +2,5 @@
 <translate xmlns:android="http://schemas.android.com/apk/res/android"
     android:interpolator="@android:anim/accelerate_decelerate_interpolator"
     android:duration="250"
-    android:fromXDelta="100%p"
+    android:fromXDelta="-15%p"
     android:toXDelta="0%p" />

@@ -82,7 +82,12 @@ public class BFragment extends MultiFragment implements View.OnClickListener {
 
         mFinishFragmentBButton.setOnClickListener(this);
 
-        setInfo();
+        mTitleTextView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setInfo();
+            }
+        }, 250);
     }
 
     private void setInfo() {
