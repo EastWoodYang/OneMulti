@@ -27,5 +27,4 @@ public class AActivity extends OneActivity {
         return AFragment.class;
     }
 
-
 }

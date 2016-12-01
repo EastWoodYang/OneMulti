@@ -593,7 +593,6 @@ public class OneActivity extends FragmentActivity implements OneMulti{
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
         if(mCurrentPrimaryItem != null) {
             MultiFragment fragment = (MultiFragment) mCurrentPrimaryItem;
             if (!fragment.backPressed()) {

@@ -127,43 +127,50 @@ public class DFragment extends MultiFragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.start_fragment_a_button:
-                Intent startAFragmentIntent = new Intent(getActivity(), AFragment.class);
-                startFragment(startAFragmentIntent);
+            case R.id.start_fragment_a_button: {
+                Intent intent = new Intent(getActivity(), AFragment.class);
+                startFragment(intent);
                 break;
-
-            case R.id.start_fragment_a_for_result_button:
-                Intent startAFragmentForResultIntent = new Intent(getActivity(), AFragment.class);
-                startFragmentForResult(startAFragmentForResultIntent, 103);
+            }
+            case R.id.start_fragment_a_for_result_button: {
+                Intent intent = new Intent(getActivity(), AFragment.class);
+                startFragmentForResult(intent, 103);
                 break;
-
-            case R.id.set_result_and_finish_fragment_d_button:
+            }
+            case R.id.set_result_and_finish_fragment_d_button: {
                 //setResult(RESULT_OK);
                 setResult(RESULT_OK, null);
                 finish();
                 break;
-
-            case R.id.finish_fragment_d_button:
+            }
+            case R.id.finish_fragment_d_button: {
                 finish();
                 break;
-
-            case R.id.start_fragment_b_with_flag_clear_top:
-                Intent startBFragmentWithFlagClearTopIntent = new Intent(getActivity(), BFragment.class);
-                startBFragmentWithFlagClearTopIntent.setFlags(LaunchMode.FLAG_FRAGMENT_CLEAR_TOP);
-                startFragment(startBFragmentWithFlagClearTopIntent);
+            }
+            case R.id.start_fragment_b_with_flag_clear_top: {
+                Intent intent = new Intent(getActivity(), BFragment.class);
+                intent.setFlags(LaunchMode.FLAG_FRAGMENT_CLEAR_TOP);
+                startFragment(intent);
                 break;
-
-            case R.id.start_fragment_b_with_flag_clear_all:
-                Intent startBFragmentWithFlagClearAllIntent = new Intent(getActivity(), BFragment.class);
-                startBFragmentWithFlagClearAllIntent.setFlags(LaunchMode.FLAG_FRAGMENT_CLEAR_ALL);
-                startFragment(startBFragmentWithFlagClearAllIntent);
+            }
+            case R.id.start_fragment_b_with_flag_clear_all: {
+                Intent intent = new Intent(getActivity(), BFragment.class);
+                intent.setFlags(LaunchMode.FLAG_FRAGMENT_CLEAR_ALL);
+                startFragment(intent);
                 break;
-
-            case R.id.start_fragment_b_with_flag_single_instance:
-                Intent startBFragmentWithFlagSingleInstanceIntent = new Intent(getActivity(), BFragment.class);
-                startBFragmentWithFlagSingleInstanceIntent.setFlags(LaunchMode.FLAG_FRAGMENT_SINGLE_INSTANCE);
-                startFragment(startBFragmentWithFlagSingleInstanceIntent);
+            }
+            case R.id.start_fragment_b_with_flag_single_top: {
+                Intent intent = new Intent(getActivity(), BFragment.class);
+                intent.setFlags(LaunchMode.FLAG_FRAGMENT_SINGLE_TOP);
+                startFragment(intent);
                 break;
+            }
+            case R.id.start_fragment_b_with_flag_single_instance: {
+                Intent intent = new Intent(getActivity(), BFragment.class);
+                intent.setFlags(LaunchMode.FLAG_FRAGMENT_SINGLE_INSTANCE);
+                startFragment(intent);
+                break;
+            }
         }
     }
 

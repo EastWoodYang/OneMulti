@@ -107,31 +107,32 @@ public class BFragment extends MultiFragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.start_fragment_c_button:
-                Intent startFragmentCIntent = new Intent(getActivity(), CFragment.class);
-                startFragment(startFragmentCIntent);
+            case R.id.start_fragment_c_button: {
+                Intent intent = new Intent(getActivity(), CFragment.class);
+                startFragment(intent);
                 break;
-
-            case R.id.start_fragment_c_for_result_button:
-                Intent startFragmentCForResultIntent = new Intent(getActivity(), CFragment.class);
-                startFragmentForResult(startFragmentCForResultIntent, 101);
+            }
+            case R.id.start_fragment_c_for_result_button: {
+                Intent intent = new Intent(getActivity(), CFragment.class);
+                startFragmentForResult(intent, 101);
                 break;
-
-            case R.id.start_fragment_c_with_flag_no_history:
-                Intent startFragmentCWithFlagNoHistoryIntent = new Intent(getActivity(), CFragment.class);
-                startFragmentCWithFlagNoHistoryIntent.setFlags(LaunchMode.FLAG_FRAGMENT_NO_HISTORY);
-                startFragment(startFragmentCWithFlagNoHistoryIntent);
+            }
+            case R.id.start_fragment_c_with_flag_no_history: {
+                Intent intent = new Intent(getActivity(), CFragment.class);
+                intent.setFlags(LaunchMode.FLAG_FRAGMENT_NO_HISTORY);
+                startFragment(intent);
                 break;
-
-            case R.id.set_result_and_finish_fragment_b_button:
+            }
+            case R.id.set_result_and_finish_fragment_b_button: {
                 //setResult(RESULT_OK);
                 setResult(RESULT_OK, null);
                 finish();
                 break;
-
-            case R.id.finish_fragment_b_button:
+            }
+            case R.id.finish_fragment_b_button: {
                 finish();
                 break;
+            }
         }
     }
 

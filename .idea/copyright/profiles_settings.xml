@@ -3,5 +3,9 @@
     <module2copyright>
       <element module="All" copyright="EastWood Yang" />
     </module2copyright>
+    <LanguageOptions name="XML">
+      <option name="fileTypeOverride" value="1" />
+      <option name="prefixLines" value="false" />
+    </LanguageOptions>
   </settings>
 </component>

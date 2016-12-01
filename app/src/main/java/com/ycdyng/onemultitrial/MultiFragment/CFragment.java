@@ -103,26 +103,26 @@ public class CFragment extends MultiFragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.start_fragment_d_button:
-                Intent startDFragmentIntent = new Intent(getActivity(), DFragment.class);
-                startFragment(startDFragmentIntent);
+            case R.id.start_fragment_d_button: {
+                Intent intent = new Intent(getActivity(), DFragment.class);
+                startFragment(intent);
                 break;
-
-            case R.id.start_fragment_d_for_result_button:
-                Intent startDFragmentForResultIntent = new Intent(getActivity(), DFragment.class);
-                startFragmentForResult(startDFragmentForResultIntent, 102);
+            }
+            case R.id.start_fragment_d_for_result_button: {
+                Intent intent = new Intent(getActivity(), DFragment.class);
+                startFragmentForResult(intent, 102);
                 break;
-
-            case R.id.set_result_and_finish_fragment_c_button:
+            }
+            case R.id.set_result_and_finish_fragment_c_button: {
                 //setResult(RESULT_OK);
                 setResult(RESULT_OK, null);
                 finish();
                 break;
-
-            case R.id.finish_fragment_c_button:
+            }
+            case R.id.finish_fragment_c_button: {
                 finish();
                 break;
-
+            }
         }
     }
 

@@ -110,35 +110,36 @@ public class AFragment extends MultiFragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.start_fragment_b_button:
+            case R.id.start_fragment_b_button: {
                 if(Build.VERSION.SDK_INT >= 23) {
                     if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 10001);
                         return;
                     }
                 }
-                Intent startBIntent = new Intent(getActivity(), BFragment.class);
-                startFragment(startBIntent);
+                Intent intent = new Intent(getActivity(), BFragment.class);
+                startFragment(intent);
                 break;
-
-            case R.id.start_fragment_b_for_result_button:
-                Intent startBForResultIntent = new Intent(getActivity(), BFragment.class);
-                startFragmentForResult(startBForResultIntent, 100);
+            }
+            case R.id.start_fragment_b_for_result_button: {
+                Intent intent = new Intent(getActivity(), BFragment.class);
+                startFragmentForResult(intent, 100);
                 break;
-
-            case R.id.start_fragment_c_and_finish_fragment_a_button:
-                Intent startCAndFinishIntent = new Intent(getActivity(), CFragment.class);
-                startFragment(startCAndFinishIntent);
+            }
+            case R.id.start_fragment_c_and_finish_fragment_a_button: {
+                Intent intent = new Intent(getActivity(), CFragment.class);
+                startFragment(intent);
                 finish();
                 break;
-
-            case R.id.finish_fragment_a_button:
+            }
+            case R.id.finish_fragment_a_button: {
                 finish();
                 break;
-
-            case R.id.finish_activity_button:
+            }
+            case R.id.finish_activity_button: {
                 finishActivity();
-                 break;
+                break;
+            }
         }
     }
 
