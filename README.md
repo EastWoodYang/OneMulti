@@ -1,7 +1,8 @@
 # OneMulti
-##### One-Activity with Multi-Fragments
+#### One-Activity with Multi-Fragments
 
 e.g.
+
 related business in one activity 相似的业务共享一个Activity
 ```
 ├─AccountControlActivity 
@@ -59,7 +60,6 @@ public class SignInFragment extends MultiFragment {
     }
     
     ...
-
 }
 ```
 
@@ -81,12 +81,12 @@ public class SignInFragment extends MultiFragment {
 
 ## start Multi-Fragment between One-Activity
 
-if AccountControlActivity has default Fragment :
+if AccountControlActivity has default Fragment
 ```
     Intent intent = new Intent(this, AccountControlActivity.class);
     startActivity(intent);
 ```
-or not :
+or not
 ```
     Intent intent = new Intent(this, AccountControlActivity.class);
     intent.putExtra(OneMulti.FRAGMENT_NAME, SignInFragment.class.getName());
