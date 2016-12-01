@@ -19,8 +19,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".OneActivity.SignInActivity"/>
-        <activity android:name=".OneActivity.SignUpActivity"/>
     </application>
 
 </manifest>

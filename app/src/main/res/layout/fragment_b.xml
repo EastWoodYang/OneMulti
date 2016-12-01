@@ -32,6 +32,9 @@
                 android:id="@+id/start_fragment_c_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:paddingLeft="8dp"
+                android:background="@drawable/button_white_bg"
                 android:focusable="true"
                 android:text="start fragment c"
                 android:gravity="left|center_vertical"/>
@@ -39,7 +42,10 @@
             <Button
                 android:id="@+id/start_fragment_c_for_result_button"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:paddingLeft="8dp"
+                android:background="@drawable/button_white_bg"
                 android:text="start fragment c for result"
                 android:gravity="left|center_vertical"/>
 
@@ -47,6 +53,9 @@
                 android:id="@+id/start_fragment_c_with_flag_no_history"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:paddingLeft="8dp"
+                android:background="@drawable/button_white_bg"
                 android:text="start fragment C with flag:NO_HISTORY"
                 android:gravity="left|center_vertical"/>
 
@@ -54,6 +63,9 @@
                 android:id="@+id/set_result_and_finish_fragment_b_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:paddingLeft="8dp"
+                android:background="@drawable/button_white_bg"
                 android:focusable="true"
                 android:text="set result and finish fragment b"
                 android:gravity="left|center_vertical" />
@@ -61,7 +73,10 @@
             <Button
                 android:id="@+id/finish_fragment_b_button"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:paddingLeft="8dp"
+                android:background="@drawable/button_white_bg"
                 android:text="finish fragment b"
                 android:gravity="left|center_vertical"/>
 

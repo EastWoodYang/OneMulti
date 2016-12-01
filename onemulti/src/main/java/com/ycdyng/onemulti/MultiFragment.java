@@ -16,8 +16,10 @@
 
 package com.ycdyng.onemulti;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -31,8 +33,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
-
-import java.lang.ref.WeakReference;
 
 public abstract class MultiFragment extends Fragment implements OneMulti {
 
@@ -55,12 +55,12 @@ public abstract class MultiFragment extends Fragment implements OneMulti {
     int mResultCode = RESULT_CANCELED;
     Intent mResultData = null;
 
-    private WeakReference<OnFragmentTransactionListener> mOnFragmentTransactionListener;
+    private View mRootView;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d(TAG, getClass().getSimpleName() + ": onAttach");
+        if (DEBUG) Log.d(TAG, getClass().getSimpleName() + ": onAttach");
         mContext = context;
         if (context instanceof OneActivity) {
             mActivity = (OneActivity) context;
@@ -72,127 +72,83 @@ public abstract class MultiFragment extends Fragment implements OneMulti {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, getClass().getSimpleName() + ": onCreate");
+        if (DEBUG) Log.d(TAG, getClass().getSimpleName() + ": onCreate");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        Log.d(TAG, getClass().getSimpleName() + ": onCreateView");
-        View view = null;
-        int layoutResId = getLayoutResId();
+        if (DEBUG) Log.d(TAG, getClass().getSimpleName() + ": onCreateView");
+        int layoutResId = getLayoutResourceId();
         if (layoutResId <= 0) {
             throw new IllegalStateException("Layout resource id can't be zero");
         }
         int themeResId = getThemeResId();
         if (themeResId <= 0) {
-            view = inflater.inflate(layoutResId, container, false);
+            mRootView = inflater.inflate(layoutResId, container, false);
         } else {
             final ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(getActivity(), themeResId);
             LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
-            view = localInflater.inflate(layoutResId, container, false);
+            mRootView = localInflater.inflate(layoutResId, container, false);
         }
-        view.setClickable(true);
-        onCreateView(view, container, savedInstanceState);
-        return view;
+        onCreateView(mRootView, container, savedInstanceState);
+        return mRootView;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view,Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG, getClass().getSimpleName() + ": onViewCreated");
+        setUserVisibleHint(true);
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.d(TAG, getClass().getSimpleName() + ": onActivityCreated");
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        Log.d(TAG, getClass().getSimpleName() + ": onViewStateRestored");
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(TAG, getClass().getSimpleName() + ": onStart");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, getClass().getSimpleName() + ": onResume");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG, getClass().getSimpleName() + ": onPause");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, getClass().getSimpleName() + ": onStop");
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d(TAG, getClass().getSimpleName() + ": onDestroyView");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, getClass().getSimpleName() + ": onDestroy");
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Log.d(TAG, getClass().getSimpleName() + ": onDetach");
-    }
-
-    protected abstract int getLayoutResId();
+    protected abstract int getLayoutResourceId();
 
     protected abstract void onCreateView(View view, ViewGroup container, Bundle savedInstanceState);
 
     @Override
-    public Animation onCreateAnimation(final int transit, final boolean enter, int nextAnim) {
+    public Animation onCreateAnimation(final int transit, final boolean enter, final int nextAnim) {
         if (nextAnim == 0) {
             return null;
         }
-        if(enter) {
-            if(nextAnim == StartAnimations[0]) {
-                ViewCompat.setTranslationZ(getView(), 1.f);
-            } else {
-                ViewCompat.setTranslationZ(getView(), 0.f);
-            }
-        } else {
-            if(nextAnim == BackAnimations[0]) {
-                ViewCompat.setTranslationZ(getView(), 1.f);
-            } else {
-                ViewCompat.setTranslationZ(getView(), 0.f);
-            }
-        }
+//        if(enter) {
+//            if(nextAnim == StartAnimations[0]) {
+//                ViewCompat.setTranslationZ(getView(), 1.0f);
+//            } else {
+//                ViewCompat.setTranslationZ(getView(), 0.0f);
+//            }
+//        } else {
+//            if(nextAnim == BackAnimations[0]) {
+//                ViewCompat.setTranslationZ(getView(), 1.0f);
+//            } else {
+//                ViewCompat.setTranslationZ(getView(), 0.0f);
+//            }
+//        }
         Animation animation = AnimationUtils.loadAnimation(getActivity(), nextAnim);
         animation.setAnimationListener(new Animation.AnimationListener() {
 
+            private int mLayerType;
+
             @Override
             public void onAnimationStart(Animation animation) {
-
+                if(getView() != null) {
+                    mLayerType = getView().getLayerType();
+                    getView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
+                }
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                OnFragmentTransactionListener listener = mOnFragmentTransactionListener == null ? null : mOnFragmentTransactionListener.get();
-                if (listener != null) {
-                    listener.onTransactionEnd();
-                }
+//                if(getView() != null) {
+//                    getView().setLayerType(mLayerType, null);
+//                    getView().post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            if(getView() != null) {
+//                                ViewCompat.setTranslationZ(getView(), 0.0f);
+//                            }
+//                        }
+//                    });
+//                }
             }
 
             @Override
@@ -212,6 +168,25 @@ public abstract class MultiFragment extends Fragment implements OneMulti {
         return R.style.AppTheme;
     }
 
+    public View findViewById(int id) {
+        if(mRootView != null) {
+            return mRootView.findViewById(id);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        mActivity.startActivityForResult(intent, requestCode);
+    }
+
+    @Override
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public void startActivityForResult(Intent intent, int requestCode, Bundle options) {
+        mActivity.startActivityForResult(intent, requestCode, options);
+    }
+
     protected final void startFragment(Intent intent) {
         mActivity.startFragment(intent);
     }
@@ -220,8 +195,26 @@ public abstract class MultiFragment extends Fragment implements OneMulti {
         mActivity.startFragment(intent, false);
     }
 
+    protected final void startFragmentBehaveBack(Intent intent) {
+        mActivity.startFragment(intent, OneMulti.BackAnimations);
+    }
+
     protected final void startFragmentForResult(Intent intent, int requestCode) {
         mActivity.startFragmentForResult(intent, requestCode);
+    }
+
+    protected final void startActivityFragment(Context context, Bundle bundle, String fragmentName) {
+        Intent oneIntent = new Intent(context, OneActivity.class);
+        oneIntent.putExtras(bundle);
+        oneIntent.putExtra(FRAGMENT_NAME, fragmentName);
+        startActivity(oneIntent);
+    }
+
+    protected final void startActivityFragmentForResult(Context context, Bundle bundle, String fragmentName, int requestCode) {
+        Intent oneIntent = new Intent(context, OneActivity.class);
+        oneIntent.putExtras(bundle);
+        oneIntent.putExtra(FRAGMENT_NAME, fragmentName);
+        startActivityForResult(oneIntent, requestCode);
     }
 
     /**
@@ -248,14 +241,30 @@ public abstract class MultiFragment extends Fragment implements OneMulti {
         }
     }
 
+    public int getResultCode() {
+        return mResultCode;
+    }
+
+    public Intent getResultData() {
+        return mResultData;
+    }
+
     public void finish() {
         mActivity.finishFragment();
+    }
+
+    public void finishWithoutAnimation() {
+        mActivity.finishFragment(false);
     }
 
     public void finishActivity() {
         synchronized (this) {
             mActivity.finishActivity();
         }
+    }
+
+    public void onFragmentResult(int requestCode, int resultCode, Intent data) {
+
     }
 
     public void showSoftInput(EditText editText) {
@@ -276,20 +285,8 @@ public abstract class MultiFragment extends Fragment implements OneMulti {
         }
     }
 
-    public void onFragmentResume() {
-
-    }
-
     protected boolean onBackPressed() {
         return false;
-    }
-
-    public interface OnFragmentTransactionListener {
-        void onTransactionEnd();
-    }
-
-    public void setOnFragmentTransactionListener(OnFragmentTransactionListener listener) {
-        this.mOnFragmentTransactionListener = new WeakReference<OnFragmentTransactionListener>(listener);
     }
 
     public int getLaunchMode() {

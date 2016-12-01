@@ -19,9 +19,9 @@ package com.ycdyng.onemulti;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
@@ -31,10 +31,9 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class OneActivity extends AppCompatActivity implements OneMulti{
+public class OneActivity extends FragmentActivity implements OneMulti{
 
     static final String TAG = "OneActivity";
-    static final boolean DEBUG = true;
 
     int mResultCode = RESULT_CANCELED;
     Intent mResultData = null;
@@ -59,19 +58,22 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
 
         String className = null;
         Intent intent = getIntent();
-        if (intent != null && intent.hasExtra(FRAGMENT_CLASS)) {
-            className =  intent.getStringExtra(FRAGMENT_CLASS);
+        if (intent != null && intent.hasExtra(FRAGMENT_NAME)) {
+            className =  intent.getStringExtra(FRAGMENT_NAME);
         } else {
             Class cls = getDefaultFragment();
-            if(cls == null) {
-                throw new IllegalArgumentException("Default Fragment class argument can not be null");
+            if(cls != null) {
+                className = cls.getName();
             }
-            className = cls.getName();
         }
-        initFragment(className, intent == null ? null : intent.getExtras());
+        if(className != null) {
+            initFragment(className, intent == null ? null : intent.getExtras());
+        }
     }
 
-    protected abstract Class<? extends MultiFragment> getDefaultFragment();
+    protected Class<? extends MultiFragment> getDefaultFragment() {
+        return null;
+    }
 
     public void initFragment(String className, Bundle bundle) {
         mCurTransaction = mFragmentManager.beginTransaction();
@@ -80,11 +82,9 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
         String name = makeFragmentName(getClass().getSimpleName(), className);
         if (DEBUG) Log.v(TAG, "Adding item #" + name);
         mCurTransaction.add(android.R.id.content, fragment, name);
-        fragment.setMenuVisibility(true);
-        fragment.setUserVisibleHint(true);
-        mCurrentPrimaryItem = fragment;
-        mCurTransaction.commitNow();
+        mCurTransaction.commitAllowingStateLoss();
         mCurTransaction = null;
+        mCurrentPrimaryItem = fragment;
     }
 
     public void startFragment(Intent intent) {
@@ -97,10 +97,13 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
         startFragment(intent, customAnimations);
     }
 
-    private void startFragment(Intent intent, int[] customAnimations) {
+    public void startFragment(Intent intent, int[] customAnimations) {
+        hiddenSoftInput();
         clearAvailIndices();
         mCurTransaction = mFragmentManager.beginTransaction();
-        mCurTransaction.setCustomAnimations(customAnimations[0], customAnimations[1]);
+        if(customAnimations != null && customAnimations.length >= 2) {
+            mCurTransaction.setCustomAnimations(customAnimations[0], customAnimations[1]);
+        }
         mCurTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 
         String name = makeFragmentName(getClass().getSimpleName(), intent.getComponent().getClassName());
@@ -250,7 +253,7 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
 
     private void finishOp() {
         if (mCurTransaction != null) {
-            mCurTransaction.commitNow();
+            mCurTransaction.commitAllowingStateLoss();
             mCurTransaction = null;
         }
     }
@@ -266,14 +269,20 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
     }
 
     private final void startFragmentForResult(Intent intent, int requestCode, int[] customAnimations) {
+        hiddenSoftInput();
         clearAvailIndices();
         mCurTransaction = mFragmentManager.beginTransaction();
-        mCurTransaction.setCustomAnimations(customAnimations[0], customAnimations[1]);
+        if(customAnimations != null && customAnimations.length >= 2) {
+            mCurTransaction.setCustomAnimations(customAnimations[0], customAnimations[1]);
+        }
 
         String name = makeFragmentName(getClass().getSimpleName(), intent.getComponent().getClassName());
         Fragment fragment = getFragment(intent.getComponent().getClassName());
         fragment.setTargetFragment(mCurrentPrimaryItem, requestCode);
         fragment.setArguments(intent.getExtras());
+        if(intent.getFlags() == LaunchMode.FLAG_FRAGMENT_NO_HISTORY && fragment instanceof MultiFragment) {
+            ((MultiFragment) fragment).setLaunchMode(LaunchMode.FLAG_FRAGMENT_NO_HISTORY);
+        }
         if (DEBUG) Log.v(TAG, "Adding item #" + name);
         mCurTransaction.add(android.R.id.content, fragment, name);
         mCurTransaction.hide(mCurrentPrimaryItem);
@@ -288,7 +297,7 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
             mCurrentPrimaryItem = fragment;
         }
 
-        mCurTransaction.commitNow();
+        mCurTransaction.commitAllowingStateLoss();
         mCurTransaction = null;
     }
 
@@ -303,16 +312,39 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
     }
 
     public final void finishFragment() {
+        finishFragment(BackAnimations);
+    }
+
+    public final void finishFragment(boolean anim) {
+        int[] customAnimations = null;
+        if(anim) customAnimations = StartAnimations;
+        finishFragment(customAnimations);
+    }
+
+    public final void finishFragment(int[] customAnimations) {
+        hiddenSoftInput();
         if (mCurTransaction == null) {
             int availableFragmentCount = getAvailableFragmentCount();
             if(availableFragmentCount <= 1) {
                 finishActivity();
             } else {
                 mCurTransaction = mFragmentManager.beginTransaction();
-                mCurTransaction.setCustomAnimations(BackAnimations[0], BackAnimations[1]);
+                if(customAnimations != null && customAnimations.length >= 2) {
+                    mCurTransaction.setCustomAnimations(customAnimations[0], customAnimations[1]);
+                }
                 Fragment targetFragment = mCurrentPrimaryItem.getTargetFragment();
                 if(targetFragment != null && targetFragment.isHidden()) {
-                    targetFragment.onActivityResult(mCurrentPrimaryItem.getTargetRequestCode(), mResultCode, mResultData);
+                    if(targetFragment instanceof MultiFragment) {
+                        MultiFragment targetMultiFragment = (MultiFragment) targetFragment;
+                        if(mCurrentPrimaryItem instanceof MultiFragment) {
+                            MultiFragment currentFragment = (MultiFragment) mCurrentPrimaryItem;
+                            targetMultiFragment.onFragmentResult(currentFragment.getTargetRequestCode(), currentFragment.getResultCode(), currentFragment.getResultData());
+                        } else {
+                            targetMultiFragment.onFragmentResult(mCurrentPrimaryItem.getTargetRequestCode(), mResultCode, mResultData);
+                        }
+                    } else {
+                        targetFragment.onActivityResult(mCurrentPrimaryItem.getTargetRequestCode(), mResultCode, mResultData);
+                    }
                     mCurTransaction.remove(mCurrentPrimaryItem);
                     mCurTransaction.show(targetFragment);
                     if (targetFragment != mCurrentPrimaryItem) {
@@ -324,34 +356,45 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
                         targetFragment.setUserVisibleHint(true);
                         mCurrentPrimaryItem = targetFragment;
                     }
-                    mCurTransaction.commitNow();
+                    mCurTransaction.commitAllowingStateLoss();
                     mCurTransaction = null;
                 } else {
-                    Fragment detachedFragment = getDetachedFragment();
-                    int detachedFragmentIndex = getFragmentIndex(detachedFragment);
-                    int currentPrimaryItemIndex = getFragmentIndex(mCurrentPrimaryItem);
-                    if(detachedFragmentIndex < currentPrimaryItemIndex) {
-                        mCurTransaction.remove(mCurrentPrimaryItem);
-                    } else {
-                        mCurTransaction.detach(mCurrentPrimaryItem);
-                    }
-                    mCurTransaction.attach(detachedFragment);
-                    if (detachedFragment != mCurrentPrimaryItem) {
-                        if (mCurrentPrimaryItem != null) {
-                            mCurrentPrimaryItem.setMenuVisibility(false);
-                            mCurrentPrimaryItem.setUserVisibleHint(false);
+                    Fragment nextFragment = getNextFragment();
+                    if(nextFragment != null) {
+                        int nextFragmentIndex = getFragmentIndex(nextFragment);
+                        int currentPrimaryItemIndex = getFragmentIndex(mCurrentPrimaryItem);
+                        if(nextFragmentIndex < currentPrimaryItemIndex) {
+                            mCurTransaction.remove(mCurrentPrimaryItem);
+                        } else {
+                            mCurTransaction.detach(mCurrentPrimaryItem);
                         }
-                        detachedFragment.setMenuVisibility(true);
-                        detachedFragment.setUserVisibleHint(true);
-                        mCurrentPrimaryItem = detachedFragment;
+                        if(nextFragment.isDetached()) {
+                            mCurTransaction.attach(nextFragment);
+                        } else {
+                            mCurTransaction.show(nextFragment);
+                        }
+                        if (nextFragment != mCurrentPrimaryItem) {
+                            if (mCurrentPrimaryItem != null) {
+                                mCurrentPrimaryItem.setMenuVisibility(false);
+                                mCurrentPrimaryItem.setUserVisibleHint(false);
+                            }
+                            nextFragment.setMenuVisibility(true);
+                            nextFragment.setUserVisibleHint(true);
+                            mCurrentPrimaryItem = nextFragment;
+                        }
+                        mCurTransaction.commitAllowingStateLoss();
+                        mCurTransaction = null;
+                    } else {
+                        finishActivity();
                     }
-                    mCurTransaction.commitNow();
-                    mCurTransaction = null;
                 }
             }
         } else {
             if(mCurrentPrimaryItem != null) {
-                mCurTransaction.remove(getVisibleFragment());
+                Fragment fragment = getVisibleFragment();
+                if(fragment != null) {
+                    mCurTransaction.remove(fragment);
+                }
             }
         }
     }
@@ -385,32 +428,32 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
         return "android:one_multi:" + activity + ":" + fragment;
     }
 
-    private Fragment getDetachedFragment() {
-        List<Fragment> detachedFragments = new ArrayList<>();
+    private Fragment getNextFragment() {
+        List<Fragment> nextFragments = new ArrayList<>();
         FragmentManager fragmentManager = getSupportFragmentManager();
         List<Fragment> fragments = fragmentManager.getFragments();
         for (int i = fragments.size() - 1; i >= 0; i--) {
             Fragment fragment = fragments.get(i);
-            if(fragment != null && fragment.isDetached()) {
-                detachedFragments.add(fragment);
+            if(fragment != null && (fragment.isDetached() || fragment.isAdded() && !fragment.isVisible())) {
+                nextFragments.add(fragment);
             }
         }
-        Fragment detachedFragment = null;
-        int detachedFragmentIndex = 0;
-        for (int i = detachedFragments.size() - 1; i >= 0; i--) {
-            if(detachedFragment == null) {
-                detachedFragment = detachedFragments.get(i);
-                detachedFragmentIndex = getFragmentIndex(detachedFragment);
+        Fragment nextFragment = null;
+        int nextFragmentIndex = 0;
+        for (int i = nextFragments.size() - 1; i >= 0; i--) {
+            if(nextFragment == null) {
+                nextFragment = nextFragments.get(i);
+                nextFragmentIndex = getFragmentIndex(nextFragment);
             } else {
-                Fragment fragment = detachedFragments.get(i);
+                Fragment fragment = nextFragments.get(i);
                 int fragmentIndex = getFragmentIndex(fragment);
-                if(fragmentIndex > detachedFragmentIndex) {
-                    detachedFragment = fragment;
-                    detachedFragmentIndex = fragmentIndex;
+                if(fragmentIndex > nextFragmentIndex) {
+                    nextFragment = fragment;
+                    nextFragmentIndex = fragmentIndex;
                 }
             }
         }
-        return detachedFragment;
+        return nextFragment;
     }
 
     private int getFragmentIndex(Fragment fragment) {
@@ -466,6 +509,18 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
         return getAvailableFragments().size();
     }
 
+    public Fragment getFragment(Class<?> cls) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        List<Fragment> fragments = fragmentManager.getFragments();
+        for (int i = fragments.size() - 1; i >= 0; i--) {
+            Fragment fragment = fragments.get(i);
+            if(fragment != null && fragment.getClass() == cls) {
+                return fragment;
+            }
+        }
+        return null;
+    }
+
     public Fragment getVisibleFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         List<Fragment> fragments = fragmentManager.getFragments();
@@ -497,7 +552,27 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
         super.onActivityResult(requestCode, resultCode, data);
         Fragment fragment = getVisibleFragment();
         if(fragment != null) {
-            fragment.onActivityResult(requestCode, resultCode, data);
+            if(fragment instanceof MultiFragment) {
+                MultiFragment multiFragment = (MultiFragment) fragment;
+                if(multiFragment.getLaunchMode() == LaunchMode.FLAG_FRAGMENT_NO_HISTORY) {
+                    mCurTransaction = mFragmentManager.beginTransaction();
+                    Fragment detachedFragment = getNextFragment();
+                    mCurTransaction.attach(detachedFragment);
+                    mCurTransaction.remove(multiFragment);
+                    mCurrentPrimaryItem = detachedFragment;
+                    mCurTransaction.commitAllowingStateLoss();
+                    mCurTransaction = null;
+                    if(detachedFragment instanceof MultiFragment) {
+                        ((MultiFragment) detachedFragment).onFragmentResult(requestCode, resultCode, data);
+                    } else {
+                        detachedFragment.onActivityResult(requestCode, resultCode, data);
+                    }
+                } else {
+                    multiFragment.onFragmentResult(requestCode, resultCode, data);
+                }
+            } else {
+                fragment.onActivityResult(requestCode, resultCode, data);
+            }
         }
     }
 
@@ -526,21 +601,6 @@ public abstract class OneActivity extends AppCompatActivity implements OneMulti{
             }
         }
     }
-
-    private MultiFragment.OnFragmentTransactionListener mOnFragmentTransactionListener = new MultiFragment.OnFragmentTransactionListener() {
-
-        @Override
-        public void onTransactionEnd() {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            if (fragmentManager != null) {
-                MultiFragment baseOneMultiFragment = (MultiFragment) fragmentManager.findFragmentById(android.R.id.content);
-                if(baseOneMultiFragment != null) {
-                    baseOneMultiFragment.onFragmentResume();
-                }
-            }
-        }
-
-    };
 
     public void showSoftInput(EditText view){
         view.requestFocus();

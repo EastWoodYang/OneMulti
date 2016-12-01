@@ -16,8 +16,6 @@
 
 package com.ycdyng.onemultitrial.OneActivity;
 
-import android.os.Bundle;
-
 import com.ycdyng.onemulti.MultiFragment;
 import com.ycdyng.onemulti.OneActivity;
 import com.ycdyng.onemultitrial.MultiFragment.AFragment;
@@ -29,9 +27,5 @@ public class AActivity extends OneActivity {
         return AFragment.class;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
 }

@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ycdyng.onemulti.LaunchMode;
 import com.ycdyng.onemulti.MultiFragment;
 import com.ycdyng.onemultitrial.R;
 
@@ -42,7 +43,7 @@ public class BFragment extends MultiFragment implements View.OnClickListener {
     private TextView mInfoTextView;
 
     @Override
-    protected int getLayoutResId() {
+    protected int getLayoutResourceId() {
         return R.layout.fragment_b;
     }
 
@@ -135,9 +136,9 @@ public class BFragment extends MultiFragment implements View.OnClickListener {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Toast.makeText(getContext(), "onActivityResult: requestCode " + requestCode + ", resultCode " + resultCode, Toast.LENGTH_SHORT).show();
+    public void onFragmentResult(int requestCode, int resultCode, Intent data) {
+        super.onFragmentResult(requestCode, resultCode, data);
+        Toast.makeText(getContext(), "onFragmentResult: requestCode " + requestCode + ", resultCode " + resultCode, Toast.LENGTH_SHORT).show();
     }
 
     @Override

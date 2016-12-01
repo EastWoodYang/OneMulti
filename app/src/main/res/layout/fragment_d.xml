@@ -32,6 +32,9 @@
                 android:id="@+id/start_fragment_a_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:paddingLeft="8dp"
+                android:background="@drawable/button_white_bg"
                 android:focusable="true"
                 android:text="start fragment a"
                 android:gravity="left|center_vertical"/>
@@ -40,6 +43,9 @@
                 android:id="@+id/start_fragment_a_for_result_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:paddingLeft="8dp"
+                android:background="@drawable/button_white_bg"
                 android:text="start fragment a for result"
                 android:gravity="left|center_vertical"/>
 
@@ -47,6 +53,9 @@
                 android:id="@+id/set_result_and_finish_fragment_d_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:paddingLeft="8dp"
+                android:background="@drawable/button_white_bg"
                 android:focusable="true"
                 android:text="set result and finish fragment d"
                 android:gravity="left|center_vertical" />
@@ -55,6 +64,9 @@
                 android:id="@+id/finish_fragment_d_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:paddingLeft="8dp"
+                android:background="@drawable/button_white_bg"
                 android:text="finish fragment d"
                 android:gravity="left|center_vertical"/>
 
@@ -62,6 +74,9 @@
                 android:id="@+id/start_fragment_b_with_flag_clear_top"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:paddingLeft="8dp"
+                android:background="@drawable/button_white_bg"
                 android:text="start fragment B with flag CLEAR_TOP"
                 android:gravity="left|center_vertical"/>
 
@@ -69,6 +84,9 @@
                 android:id="@+id/start_fragment_b_with_flag_clear_all"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:paddingLeft="8dp"
+                android:background="@drawable/button_white_bg"
                 android:text="start fragment B with flag:CLEAR_ALL"
                 android:gravity="left|center_vertical"/>
 
@@ -76,6 +94,9 @@
                 android:id="@+id/start_fragment_b_with_flag_single_top"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:paddingLeft="8dp"
+                android:background="@drawable/button_white_bg"
                 android:text="start fragment B with flag:SINGLE_TOP"
                 android:gravity="left|center_vertical"/>
 
@@ -83,6 +104,9 @@
                 android:id="@+id/start_fragment_b_with_flag_single_instance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:paddingLeft="8dp"
+                android:background="@drawable/button_white_bg"
                 android:text="start fragment B with flag:SINGLE_INSTANCE"
                 android:gravity="left|center_vertical"/>
 

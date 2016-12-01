@@ -50,7 +50,7 @@ public class AFragment extends MultiFragment implements View.OnClickListener {
     private long mTouchTime = 0;
 
     @Override
-    protected int getLayoutResId() {
+    protected int getLayoutResourceId() {
         return R.layout.fragment_a;
     }
 
@@ -156,9 +156,9 @@ public class AFragment extends MultiFragment implements View.OnClickListener {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Toast.makeText(getContext(), "onActivityResult: requestCode " + requestCode + ", resultCode " + resultCode, Toast.LENGTH_SHORT).show();
+    public void onFragmentResult(int requestCode, int resultCode, Intent data) {
+        super.onFragmentResult(requestCode, resultCode, data);
+        Toast.makeText(getContext(), "onFragmentResult: requestCode " + requestCode + ", resultCode " + resultCode, Toast.LENGTH_SHORT).show();
     }
 
     @Override
