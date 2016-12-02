@@ -101,7 +101,8 @@ Call this to set the result that your fragment will return to its caller. the ca
 
 If call, and the fragment will be close, then the top fragment of the history stack will be added, or activity will be closed.
 
-For example, consider a task consisting of the fragments: A, B, C. If C calls finish(), then B will be add to activity, resulting in the stack still being: A, B.
+For example, consider a task consisting of the fragments: A, B, C. If C calls finish(), then B will be add to activity, resulting in the stack will being: A, B.
+
 For example, consider a task consisting of the fragments: A. If A calls finish(), then this activity will be closed.
 
 ## Fragment Launch Mode
