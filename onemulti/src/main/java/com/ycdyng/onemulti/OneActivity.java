@@ -52,7 +52,7 @@ public class OneActivity extends FragmentActivity implements OneMulti{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
 
         mFragmentManager = getSupportFragmentManager();
