@@ -79,6 +79,16 @@
                 android:text="finish activity"
                 android:gravity="left|center_vertical"/>
 
+            <Button
+                android:id="@+id/start_another_activity_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:paddingLeft="8dp"
+                android:background="@drawable/button_white_bg"
+                android:text="start another activity"
+                android:gravity="left|center_vertical"/>
+
         </LinearLayout>
 
     </LinearLayout>

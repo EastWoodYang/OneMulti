@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -136,7 +137,6 @@ public class OneActivity extends FragmentActivity implements OneMulti{
                     fragment.setArguments(intent.getExtras());
                     if (DEBUG) Log.v(TAG, "Adding item #" + name);
                     mCurTransaction.add(android.R.id.content, fragment, name);
-
                     if(mCurrentPrimaryItem != null) {
                         mCurTransaction.detach(mCurrentPrimaryItem);
                     }
@@ -286,7 +286,6 @@ public class OneActivity extends FragmentActivity implements OneMulti{
         if (DEBUG) Log.v(TAG, "Adding item #" + name);
         mCurTransaction.add(android.R.id.content, fragment, name);
         mCurTransaction.hide(mCurrentPrimaryItem);
-
         if (fragment != mCurrentPrimaryItem) {
             if (mCurrentPrimaryItem != null) {
                 mCurrentPrimaryItem.setMenuVisibility(false);
@@ -336,6 +335,7 @@ public class OneActivity extends FragmentActivity implements OneMulti{
                 if(targetFragment != null && targetFragment.isHidden()) {
                     if(targetFragment instanceof MultiFragment) {
                         MultiFragment targetMultiFragment = (MultiFragment) targetFragment;
+                        targetMultiFragment.setStatusBarColor();
                         if(mCurrentPrimaryItem instanceof MultiFragment) {
                             MultiFragment currentFragment = (MultiFragment) mCurrentPrimaryItem;
                             targetMultiFragment.onFragmentResult(currentFragment.getTargetRequestCode(), currentFragment.getResultCode(), currentFragment.getResultData());

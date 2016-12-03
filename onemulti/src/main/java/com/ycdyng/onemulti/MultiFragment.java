@@ -19,16 +19,20 @@ package com.ycdyng.onemulti;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ContextThemeWrapper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
@@ -57,6 +61,8 @@ public abstract class MultiFragment extends Fragment implements OneMulti {
 
     private View mRootView;
 
+    private int mColorPrimaryDark;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -84,13 +90,15 @@ public abstract class MultiFragment extends Fragment implements OneMulti {
             throw new IllegalStateException("Layout resource id can't be zero");
         }
         int themeResId = getThemeResId();
-        if (themeResId <= 0) {
-            mRootView = inflater.inflate(layoutResId, container, false);
-        } else {
-            final ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(getActivity(), themeResId);
-            LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
-            mRootView = localInflater.inflate(layoutResId, container, false);
+        if (themeResId != R.style.AppTheme) {
+            ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(getActivity(), themeResId);
+            inflater = inflater.cloneInContext(contextThemeWrapper);
         }
+        mColorPrimaryDark = getColorPrimaryDark(inflater.getContext().getTheme());
+        setStatusBarColor();
+
+        mRootView = inflater.inflate(layoutResId, container, false);
+
         onCreateView(mRootView, container, savedInstanceState);
         return mRootView;
     }
@@ -295,5 +303,29 @@ public abstract class MultiFragment extends Fragment implements OneMulti {
 
     public void setLaunchMode(int launchMode) {
         this.launchMode = launchMode;
+    }
+
+    public void setStatusBarColor() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mColorPrimaryDark != 0) {
+            Window window = mActivity.getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(mColorPrimaryDark);
+        }
+    }
+
+    public void setStatusBarColor(int colorPrimaryDark) {
+        mColorPrimaryDark = colorPrimaryDark;
+        setStatusBarColor();
+    }
+
+    public int getColorPrimaryDark(Resources.Theme theme) {
+        int color = 0; // a default
+        final TypedArray appearance = theme.obtainStyledAttributes(new int[] {android.R.attr.colorPrimaryDark});
+        if (0 < appearance.getIndexCount()) {
+            int attr = appearance.getIndex(0);
+            color = appearance.getColor(attr, color);
+        }
+        appearance.recycle();
+        return color;
     }
 }

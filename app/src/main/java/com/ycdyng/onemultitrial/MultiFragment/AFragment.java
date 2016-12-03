@@ -32,6 +32,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ycdyng.onemulti.MultiFragment;
+import com.ycdyng.onemulti.OneMulti;
+import com.ycdyng.onemultitrial.OneActivity.AActivity;
 import com.ycdyng.onemultitrial.R;
 
 import java.util.List;
@@ -44,6 +46,7 @@ public class AFragment extends MultiFragment implements View.OnClickListener {
     private Button mStartFragmentCAndFinishFragmentAButton;
     private Button mFinishFragmentAButton;
     private Button mFinishActivityAButton;
+    private Button mStartAnotherActivityButton;
     private TextView mInfoTextView;
 
     private long mWaitTime = 2000;
@@ -67,6 +70,7 @@ public class AFragment extends MultiFragment implements View.OnClickListener {
         mStartFragmentCAndFinishFragmentAButton = (Button) rootView.findViewById(R.id.start_fragment_c_and_finish_fragment_a_button);
         mFinishFragmentAButton = (Button) rootView.findViewById(R.id.finish_fragment_a_button);
         mFinishActivityAButton = (Button) rootView.findViewById(R.id.finish_activity_button);
+        mStartAnotherActivityButton = (Button) rootView.findViewById(R.id.start_another_activity_button);
         mInfoTextView = (TextView) rootView.findViewById(R.id.info_text_view);
 
         mStartFragmentBButton.setOnClickListener(this);
@@ -84,7 +88,7 @@ public class AFragment extends MultiFragment implements View.OnClickListener {
 
         mFinishFragmentAButton.setOnClickListener(this);
         mFinishActivityAButton.setOnClickListener(this);
-
+        mStartAnotherActivityButton.setOnClickListener(this);
         mTitleTextView.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -138,6 +142,12 @@ public class AFragment extends MultiFragment implements View.OnClickListener {
             }
             case R.id.finish_activity_button: {
                 finishActivity();
+                break;
+            }
+            case R.id.start_another_activity_button: {
+                Intent intent = new Intent(getActivity(), AActivity.class);
+                intent.putExtra(FRAGMENT_NAME, BFragment.class.getName());
+                startActivity(intent);
                 break;
             }
         }
