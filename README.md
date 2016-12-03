@@ -45,6 +45,12 @@ public class SignInFragment extends MultiFragment {
 
     Button signInButton;
     
+    s@Override
+    protected int getThemeResId() {
+        // Fragment Theme, like set status bar color
+        return R.style.CustomTheme;
+    }
+    
     @Override
     protected int getLayoutResourceId() {
         // You must define a layout of this fragment.
