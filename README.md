@@ -21,6 +21,24 @@ related business in one activity 相似的业务共享一个Activity
 <img src='https://github.com/YcdYng/OneMulti/blob/master/screenshot/3.png' height='350'/>
 <img src='https://github.com/YcdYng/OneMulti/blob/master/screenshot/4.png' height='350'/>
 
+# Get it
+available on Maven Central
+```
+    <dependency>
+      <groupId>com.ycdyng.android</groupId>
+      <artifactId>onemulti</artifactId>
+      <version>1.0.0</version>
+      <type>pom</type>
+    </dependency>
+```
+
+or 
+
+```
+    compile 'com.ycdyng.android:onemulti:1.0.0'
+```
+
+
 # Usages
 
 **One-Activity**

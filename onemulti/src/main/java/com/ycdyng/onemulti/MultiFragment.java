@@ -111,7 +111,7 @@ public abstract class MultiFragment extends Fragment implements OneMulti {
 
     protected abstract int getLayoutResourceId();
 
-    protected abstract void onCreateView(View view, ViewGroup container, Bundle savedInstanceState);
+    protected abstract void onCreateView(View rootView, ViewGroup container, Bundle savedInstanceState);
 
     @Override
     public Animation onCreateAnimation(final int transit, final boolean enter, final int nextAnim) {
