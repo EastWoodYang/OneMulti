@@ -27,7 +27,7 @@ available on Maven Central
     <dependency>
       <groupId>com.ycdyng.android</groupId>
       <artifactId>onemulti</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.4</version>
       <type>pom</type>
     </dependency>
 ```
@@ -35,7 +35,7 @@ available on Maven Central
 or 
 
 ```
-    compile 'com.ycdyng.android:onemulti:1.0.0'
+    compile 'com.ycdyng.android:onemulti:1.0.4'
 ```
 
 
