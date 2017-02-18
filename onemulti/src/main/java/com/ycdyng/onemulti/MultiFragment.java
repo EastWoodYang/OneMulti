@@ -320,12 +320,18 @@ public abstract class MultiFragment extends Fragment implements OneMulti {
 
     public int getColorPrimaryDark(Resources.Theme theme) {
         int color = 0; // a default
-        final TypedArray appearance = theme.obtainStyledAttributes(new int[] {android.R.attr.colorPrimaryDark});
-        if (0 < appearance.getIndexCount()) {
-            int attr = appearance.getIndex(0);
-            color = appearance.getColor(attr, color);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            try {
+                final TypedArray appearance = theme.obtainStyledAttributes(new int[] {android.R.attr.colorPrimaryDark});
+                if (0 < appearance.getIndexCount()) {
+                    int attr = appearance.getIndex(0);
+                    color = appearance.getColor(attr, color);
+                }
+                appearance.recycle();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        appearance.recycle();
         return color;
     }
 }

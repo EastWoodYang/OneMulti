@@ -562,13 +562,9 @@ public class OneActivity extends FragmentActivity implements OneMulti{
                     mCurrentPrimaryItem = detachedFragment;
                     mCurTransaction.commitAllowingStateLoss();
                     mCurTransaction = null;
-                    if(detachedFragment instanceof MultiFragment) {
-                        ((MultiFragment) detachedFragment).onFragmentResult(requestCode, resultCode, data);
-                    } else {
-                        detachedFragment.onActivityResult(requestCode, resultCode, data);
-                    }
+                    detachedFragment.onActivityResult(requestCode, resultCode, data);
                 } else {
-                    multiFragment.onFragmentResult(requestCode, resultCode, data);
+                    multiFragment.onActivityResult(requestCode, resultCode, data);
                 }
             } else {
                 fragment.onActivityResult(requestCode, resultCode, data);
@@ -598,6 +594,8 @@ public class OneActivity extends FragmentActivity implements OneMulti{
             if (!fragment.backPressed()) {
                 finishFragment();
             }
+        } else {
+            super.onBackPressed();
         }
     }
 
