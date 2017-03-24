@@ -54,9 +54,13 @@ public class OneActivity extends FragmentActivity implements OneMulti{
     protected void onCreate(Bundle savedInstanceState) {
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-
         mFragmentManager = getSupportFragmentManager();
-
+        if(savedInstanceState != null) {
+            mCurrentPrimaryItem = getNextFragment();
+            if(mCurrentPrimaryItem != null) {
+                return;
+            }
+        }
         String className = null;
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra(FRAGMENT_NAME)) {

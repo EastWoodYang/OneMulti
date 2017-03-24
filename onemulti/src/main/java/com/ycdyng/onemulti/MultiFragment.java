@@ -71,7 +71,7 @@ public abstract class MultiFragment extends Fragment implements OneMulti {
         if (context instanceof OneActivity) {
             mActivity = (OneActivity) context;
         } else {
-            throw new ClassCastException(mActivity.toString() + " must extends MultiFragment");
+            throw new ClassCastException(mActivity.toString() + " must extends OneActivity");
         }
     }
 
