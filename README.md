@@ -172,7 +172,7 @@ For example, If A calls startFragmentForResult() with an Intent that resolves to
 
 ## License
 ```
-   Copyright 2016-2017 EastWood Yang
+   Copyright 2016 EastWood Yang
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
